@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troop 233 & 2233 - Expense Reimbursement Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* background: linear-gradient(135deg, #81613C 0%, #764ba2 100%); */
+            background: linear-gradient(135deg, #81613C 0%, #fdf4e3 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #81613C;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+        
+        .header h2 {
+            color: #81613C;
+            font-size: 1.5em;
+            font-weight: normal;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            background: #81613C;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #81613C;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .table-section {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        table th {
+            background: #81613C;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        table tr:hover {
+            background: #f8f9ff;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, #42813c 0%, #0022ff 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .file-upload-section {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 5px;
+            border: 2px dashed #81613C;
+        }
+        
+        .info-box {
+            background: #fdf4e3;
+            border-left: 4px solid #a70000;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            color: #a70000;
+        }
+        
+        .totals-display {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .total-row.grand-total {
+            border-top: 3px solid #81613C;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #81613C;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏕️ TROOPS 233 & 2233 🪵</h1>
+            <h2>Expense Reimbursement Form</h2>
+        </div>
+        
+        <form action="/submit" method="POST" enctype="multipart/form-data" id="expenseForm">
+            <!-- Event Information Section -->
+            <div class="form-section">
+                <h3>Event Information</h3>
+                
+                <div class="form-group">
+                    <label for="event_name">Event Name: *</label>
+                    <input type="text" id="event_name" name="event_name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="event_dates">Event Date(s): *</label>
+                    <input type="text" id="event_dates" name="event_dates" placeholder="e.g., March 15-17, 2025" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Reason / Description: *</label>
+                    <textarea id="reason" name="reason" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date_submitted">Date Submitted: *</label>
+                    <input type="date" id="date_submitted" name="date_submitted" required>
+                </div>
+            </div>
+            
+            <!-- Purchases Section -->
+            <div class="form-section">
+                <h3>Items Purchased</h3>
+                <div class="info-box">
+                    <p><strong>⚠️ Instructions:</strong> Enter up to 5 purchase line items. At least one purchase is required.</p>
+                </div>
+                
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date Purchased</th>
+                                <th>Place Purchased</th>
+                                <th>Items Purchased</th>
+                                <th>$ Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="date" name="purchase_date_0" class="purchase-date"></td>
+                                <td><input type="text" name="purchase_place_0" class="purchase-place"></td>
+                                <td><input type="text" name="purchase_items_0" class="purchase-items"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_0" class="purchase-amount" data-index="0"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="purchase_date_1"></td>
+                                <td><input type="text" name="purchase_place_1"></td>
+                                <td><input type="text" name="purchase_items_1"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_1" class="purchase-amount" data-index="1"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="purchase_date_2"></td>
+                                <td><input type="text" name="purchase_place_2"></td>
+                                <td><input type="text" name="purchase_items_2"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_2" class="purchase-amount" data-index="2"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="purchase_date_3"></td>
+                                <td><input type="text" name="purchase_place_3"></td>
+                                <td><input type="text" name="purchase_items_3"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_3" class="purchase-amount" data-index="3"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="purchase_date_4"></td>
+                                <td><input type="text" name="purchase_place_4"></td>
+                                <td><input type="text" name="purchase_items_4"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_4" class="purchase-amount" data-index="4"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Mileage Section -->
+            <div class="form-section">
+                <h3>Mileage Reimbursement</h3>
+                <div class="info-box">
+                    <p><strong>Current Rate:</strong> $0.625 per mile</p>
+                    <p><strong>⚠️ Instructions:</strong> Enter up to 4 mileage reimbursement line items.</p>
+                </div>
+                
+                <div class="table-section">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Start Location</th>
+                                <th>Destination</th>
+                                <th>Miles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="date" name="mileage_date_0"></td>
+                                <td><input type="text" name="mileage_start_0"></td>
+                                <td><input type="text" name="mileage_dest_0"></td>
+                                <td><input type="number" step="0.01" name="mileage_miles_0" class="mileage-miles" data-index="0"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="mileage_date_1"></td>
+                                <td><input type="text" name="mileage_start_1"></td>
+                                <td><input type="text" name="mileage_dest_1"></td>
+                                <td><input type="number" step="0.01" name="mileage_miles_1" class="mileage-miles" data-index="1"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="mileage_date_2"></td>
+                                <td><input type="text" name="mileage_start_2"></td>
+                                <td><input type="text" name="mileage_dest_2"></td>
+                                <td><input type="number" step="0.01" name="mileage_miles_2" class="mileage-miles" data-index="2"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="date" name="mileage_date_3"></td>
+                                <td><input type="text" name="mileage_start_3"></td>
+                                <td><input type="text" name="mileage_dest_3"></td>
+                                <td><input type="number" step="0.01" name="mileage_miles_3" class="mileage-miles" data-index="3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Supporting Documents Section -->
+            <div class="form-section">
+                <h3>Supporting Documents</h3>
+                <div class="info-box">
+                    <p><strong>Accepted formats:</strong> JPEG, JPG, PNG, TIFF, PDF</p>
+                    <p><strong>⚠️ Instructions:</strong> Upload receipts and supporting documents (optional but recommended)</p>
+                </div>
+                
+                <div class="file-upload-section">
+                    <div class="form-group">
+                        <label for="supporting_docs">Upload Supporting Documents:</label>
+                        <input type="file" id="supporting_docs" name="supporting_docs" multiple 
+                               accept=".jpg,.jpeg,.png,.tiff,.pdf">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Totals Display -->
+            <div class="totals-display">
+                <div class="total-row">
+                    <span>Total Purchases:</span>
+                    <span id="total-purchases">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Total Mileage (<span id="total-miles">0.00</span> miles @ $0.625):</span>
+                    <span id="total-mileage">$0.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>GRAND TOTAL:</span>
+                    <span id="grand-total">$0.00</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Generate Expense Report</button>
+        </form>
+    </div>
+    
+    <script>
+        // Auto-calculate totals
+        function updateTotals() {
+            let totalPurchases = 0;
+            let totalMiles = 0;
+            const mileageRate = 0.625;
+            
+            // Calculate purchases
+            document.querySelectorAll('.purchase-amount').forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                totalPurchases += value;
+            });
+            
+            // Calculate mileage
+            document.querySelectorAll('.mileage-miles').forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                totalMiles += value;
+            });
+            
+            const totalMileage = totalMiles * mileageRate;
+            const grandTotal = totalPurchases + totalMileage;
+            
+            // Update display
+            document.getElementById('total-purchases').textContent = `${totalPurchases.toFixed(2)}`;
+            document.getElementById('total-miles').textContent = totalMiles.toFixed(2);
+            document.getElementById('total-mileage').textContent = `${totalMileage.toFixed(2)}`;
+            document.getElementById('grand-total').textContent = `${grandTotal.toFixed(2)}`;
+        }
+        
+        // Add event listeners
+        document.querySelectorAll('.purchase-amount, .mileage-miles').forEach(input => {
+            input.addEventListener('input', updateTotals);
+        });
+        
+        // Set default date to today
+        document.getElementById('date_submitted').valueAsDate = new Date();
+        
+        // Form validation
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            const hasPurchase = Array.from(document.querySelectorAll('.purchase-amount')).some(input => {
+                return parseFloat(input.value) > 0;
+            });
+            
+            const hasMileage = Array.from(document.querySelectorAll('.mileage-miles')).some(input => {
+                return parseFloat(input.value) > 0;
+            });
+            
+            if (!hasPurchase && !hasMileage) {
+                e.preventDefault();
+                alert('Please enter at least one purchase or mileage item.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
