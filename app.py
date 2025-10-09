@@ -16,6 +16,7 @@ import uuid
 from pdf2image import convert_from_path
 
 app = Flask(__name__)
+app.config['APPLICATION_ROOT'] = '/tools/scoutExpenses'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['REPORT_FOLDER'] = 'reports'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
