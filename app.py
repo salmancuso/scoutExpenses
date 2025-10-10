@@ -14,11 +14,20 @@ from PyPDF2 import PdfReader
 import os
 import uuid
 from pdf2image import convert_from_path
+import sys
+import logging
+import os
+from pathlib import Path
+
+# Get the absolute path of the app directory
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+logging.basicConfig(stream=sys.stderr)
 
 app = Flask(__name__)
 app.config['APPLICATION_ROOT'] = '/tools/scoutExpenses'
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['REPORT_FOLDER'] = 'reports'
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'uploads')
+app.config['REPORT_FOLDER'] = os.path.join(BASE_DIR, 'reports')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 app.config['ALLOWED_EXTENSIONS'] = {'jpg', 'jpeg', 'png', 'tiff', 'pdf'}
 
@@ -86,33 +95,37 @@ def generate_expense_report(data, supporting_files):
     )
     
     # Title
-    story.append(Paragraph("TROOP 233", title_style))
-    story.append(Paragraph("EXPENSE REIMBURSEMENT", title_style))
+    story.append(Paragraph("TROOP 233/2233 EXPENSE REIMBURSEMENT", title_style))
+    story.append(Paragraph("NEXT STEPS: After you create your Expense Report PDF, please remember to email it to the treasurer through Troopweb Host. Creating the report is just the first step—we need to receive it to process your reimbursement!",title_style))
+    story.append(Paragraph("IMPORTANT TIMING: Please submit your expense report within three weeks of your outing or event. This helps us keep our troop finances organized and ensures you receive credit for your purchases and mileage.", title_style))
+    story.append(Paragraph("HEADS UP: Reports submitted after the three-week window cannot be reimbursed, and any expenses will be considered a generous donation to the troop. We appreciate your support, but we want to make sure you get reimbursed for your approved expenses!", title_style))
+
     story.append(Spacer(1, 0.2*inch))
     
     # Event Information
     event_data = [
-        ['Event:', data['event_name']],
-        ['Event Date(s):', data['event_dates']],
-        ['Reason / Description:', data['reason']],
-        ['Date Submitted:', data['date_submitted']]
+        ['Requested From:', data['event_name']],
+        ['Event Details:', Paragraph(data['event_dates'], header_style)],
+        ['Reason / Description:', Paragraph(data['reason'], header_style)],
+        ['Date Created:', data['date_submitted']]
     ]
     
-    event_table = Table(event_data, colWidths=[2*inch, 5*inch])
+    event_table = Table(event_data, colWidths=[2*inch, 4.5*inch])
     event_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-    ]))
+    ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+    ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+    ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+    ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Add this line
+    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+    ('FONTSIZE', (0, 0), (-1, -1), 10),
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('LEFTPADDING', (0, 0), (-1, -1), 6),
+    ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+    ('TOPPADDING', (0, 0), (-1, -1), 6),
+    ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+]))
+
     story.append(event_table)
     story.append(Spacer(1, 0.2*inch))
     

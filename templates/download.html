@@ -164,19 +164,23 @@
         <div class="success-icon"></div>
         
         <h1>Report Generated Successfully!</h1>
-        <p class="subtitle">Your expense reimbursement report is ready for download.</p>
+        <p class="subtitle">Your expense reimbursement report is ready for download.
+<br><br><h2>👣 Next Steps:</h2><BR> After you create your Expense Report PDF, please remember to <strong>email it to the treasurer through Troopweb Host.</strong> Creating the report is just the first step—we need to receive it to process your reimbursement!
+<br><br><h2>⚠️ Important Timing:</h2><br> Please <strong>submit your expense report within three weeks of your outing or event.</strong> This helps us keep our troop finances organized and ensures you receive credit for your purchases and mileage.
+<br><br><h2>☝️ Heads Up:</h2><BR> Reports submitted after the three-week window cannot be reimbursed, and any expenses will be considered a generous donation to the troop. We appreciate your support, but we want to make sure you get reimbursed for your approved expenses!
+</p>
+<BR><BR>
         
         <div class="report-info">
             <p><strong>Report ID:</strong> {{ report_id[:8] }}...</p>
             <p><strong>Generated:</strong> <span id="current-time"></span></p>
-            <p><strong>Organization:</strong> Troop 233</p>
         </div>
         
         <div class="button-group">
-            <a href="/get_report/{{ report_id }}" class="btn btn-primary">
+            <a href="{{ url_for('get_report', report_id=report_id) }}" class="btn btn-primary">
                 📄 Download PDF Report
             </a>
-            <a href="/" class="btn btn-secondary">
+            <a href="/tools/scoutExpenses" class="btn btn-secondary">
                 ➕ Create Another Report
             </a>
         </div>

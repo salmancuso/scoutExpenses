@@ -218,21 +218,23 @@
         <div class="header">
             <h1>🏕️ TROOPS 233 & 2233 🪵</h1>
             <h2>Expense Reimbursement Form</h2>
+            <BR>
+            <p><strong>⚠️ IMPORTANT TIMING:</STRONG> Please submit your expense report within three weeks of your outing or event. This helps us keep our troop finances organized and ensures you receive credit for your purchases and mileage. <STRONG>Reports submitted after the three-week window cannot be reimbursed,</STRONG> and any expenses will be considered a generous donation to the troop.</p>
         </div>
         
-        <form action="/submit" method="POST" enctype="multipart/form-data" id="expenseForm">
-            <!-- Event Information Section -->
+        <form action="{{ url_for('submit') }}" method="POST" enctype="multipart/form-data" id="expenseForm">  
+          <!-- Event Information Section -->
             <div class="form-section">
                 <h3>Event Information</h3>
                 
                 <div class="form-group">
-                    <label for="event_name">Event Name: *</label>
+                    <label for="event_name">Requester Name: *</label>
                     <input type="text" id="event_name" name="event_name" required>
                 </div>
                 
                 <div class="form-group">
-                    <label for="event_dates">Event Date(s): *</label>
-                    <input type="text" id="event_dates" name="event_dates" placeholder="e.g., March 15-17, 2025" required>
+                    <label for="event_dates">Troop Number, Event Name and Date(s): *</label>
+                    <input type="text" id="event_dates" name="event_dates" placeholder="e.g.,Troop 233, Mystery Trip, March 15-17, 2025" required>
                 </div>
                 
                 <div class="form-group">
@@ -250,7 +252,7 @@
             <div class="form-section">
                 <h3>Items Purchased</h3>
                 <div class="info-box">
-                    <p><strong>⚠️ Instructions:</strong> Enter up to 5 purchase line items. At least one purchase is required.</p>
+                    <p><strong>⚠️ Instructions:</strong> Enter up to 5 purchase line items.</p>
                 </div>
                 
                 <div class="table-section">
@@ -351,8 +353,8 @@
             <div class="form-section">
                 <h3>Supporting Documents</h3>
                 <div class="info-box">
-                    <p><strong>Accepted formats:</strong> JPEG, JPG, PNG, TIFF, PDF</p>
-                    <p><strong>⚠️ Instructions:</strong> Upload receipts and supporting documents (optional but recommended)</p>
+                    <p><strong>Accepted formats:</strong> JPEG, JPG, PNG, TIFF, PDF.</p>
+                    <p><strong>⚠️ Instructions:</strong> Upload receipts for all purchases (required). Mileage claims do not require supporting documents.</p>
                 </div>
                 
                 <div class="file-upload-section">
