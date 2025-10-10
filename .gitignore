@@ -1,6 +1,9 @@
-.pdf
-.jpg
-.jpeg
-.tiff
-.png
-.csv
+*.pdf
+*.jpg
+*.jpeg
+*.tiff
+*.png
+*.csv
+*.pyc
+
+__pycache__
