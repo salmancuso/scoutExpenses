@@ -573,4 +573,4 @@ For issues, questions, or feature requests:
 
 **Version:** 1.1  
 **Last Updated:** October 2025  
-**Maintained by:** Troop 233 Technology Team
+**Maintained by:** Sal Mancuso ASM for Troop 233
