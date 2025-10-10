@@ -104,7 +104,7 @@ def generate_expense_report(data, supporting_files):
     
     # Event Information
     event_data = [
-        ['Requested From:', data['event_name']],
+        ['Requested From:', data['requester']],
         ['Event Details:', Paragraph(data['event_dates'], header_style)],
         ['Reason / Description:', Paragraph(data['reason'], header_style)],
         ['Date Created:', data['date_submitted']]
@@ -286,7 +286,7 @@ def submit():
     try:
         # Collect form data
         data = {
-            'event_name': request.form.get('event_name', ''),
+            'requester': request.form.get('requester', ''),
             'event_dates': request.form.get('event_dates', ''),
             'reason': request.form.get('reason', ''),
             'date_submitted': request.form.get('date_submitted', ''),
