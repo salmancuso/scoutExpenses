@@ -18,7 +18,6 @@ import sys
 import logging
 import os
 from pathlib import Path
-import re
 
 # Get the absolute path of the app directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -69,23 +68,10 @@ def convert_pdf_to_images(pdf_path, output_folder):
         print(f"Error converting PDF: {e}")
         return []
 
-def sanitize_filename(text):
-    """Remove special characters and spaces from filename"""
-    # Remove any characters that aren't alphanumeric, hyphen, or underscore
-    text = re.sub(r'[^\w\-]', '', text)
-    return text
-
 def generate_expense_report(data, supporting_files):
     """Generate PDF expense report"""
     report_id = str(uuid.uuid4())
-    
-    # Create sanitized filename
-    last_name = sanitize_filename(data['requestor_last'])
-    event_name = sanitize_filename(data['event_name'])
-    event_date = sanitize_filename(data['event_date'].replace('-', ''))
-    
-    report_filename = f"{last_name}_{event_name}_{event_date}.pdf"
-    report_path = os.path.join(app.config['REPORT_FOLDER'], report_filename)
+    report_path = os.path.join(app.config['REPORT_FOLDER'], f"expense_report_{report_id}.pdf")
     
     doc = SimpleDocTemplate(report_path, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
     story = []
@@ -101,16 +87,6 @@ def generate_expense_report(data, supporting_files):
         alignment=TA_CENTER
     )
     
-    warning_style = ParagraphStyle(
-        'WarningStyle',
-        parent=styles['Normal'],
-        fontSize=12,
-        textColor=colors.HexColor('#a70000'),
-        spaceAfter=10,
-        alignment=TA_CENTER,
-        fontName='Helvetica-Bold'
-    )
-    
     header_style = ParagraphStyle(
         'CustomHeader',
         parent=styles['Normal'],
@@ -120,42 +96,32 @@ def generate_expense_report(data, supporting_files):
     
     # Title
     story.append(Paragraph("TROOP 233/2233 EXPENSE REIMBURSEMENT", title_style))
-    story.append(Spacer(1, 0.1*inch))
-    
-    # Warning about reimbursement
-    story.append(Paragraph("⚠️ IMPORTANT: Reimbursement will go to Requestor's account", warning_style))
-    story.append(Spacer(1, 0.1*inch))
-    
-    story.append(Paragraph("NEXT STEPS: You MUST email this expense report to the treasurer through Troopweb Host in order to be reimbursed.", title_style))
+    story.append(Paragraph("NEXT STEPS: After you create your Expense Report PDF, please remember to email it to the treasurer through Troopweb Host.",title_style))
     story.append(Spacer(1, 0.2*inch))
     
     # Event Information
-    requestor_name = f"{data['requestor_first']} {data['requestor_last']}"
     event_data = [
-        ['Requestor:', requestor_name],
-        ['Email:', data['email']],
-        ['Troop #:', data['troop_number']],
-        ['Event Name:', data['event_name']],
-        ['Event Date:', data['event_date']],
+        ['Requested From:', data['requester']],
+        ['Event Details:', Paragraph(data['event_dates'], header_style)],
         ['Reason / Description:', Paragraph(data['reason'], header_style)],
-        ['Date Submitted:', data['date_submitted']]
+        ['Date Created:', data['date_submitted']]
     ]
     
     event_table = Table(event_data, colWidths=[2*inch, 4.5*inch])
     event_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
-        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('GRID', (0, 0), (-1, -1), 1, colors.black),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-    ]))
+    ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+    ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+    ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+    ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+    ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Add this line
+    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+    ('FONTSIZE', (0, 0), (-1, -1), 10),
+    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+    ('LEFTPADDING', (0, 0), (-1, -1), 6),
+    ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+    ('TOPPADDING', (0, 0), (-1, -1), 6),
+    ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+]))
 
     story.append(event_table)
     story.append(Spacer(1, 0.2*inch))
@@ -164,20 +130,18 @@ def generate_expense_report(data, supporting_files):
     purchase_data = [['Date Purchased', 'Place Purchased', 'Items Purchased', '$ Amount']]
     total_purchases = 0.0
     
-    for purchase in data['purchases']:
-        if purchase['date']:
-            amount = float(purchase['amount']) if purchase['amount'] else 0.0
+    for i in range(5):
+        if data['purchases'][i]['date']:
+            amount = float(data['purchases'][i]['amount']) if data['purchases'][i]['amount'] else 0.0
             total_purchases += amount
             purchase_data.append([
-                purchase['date'],
-                purchase['place'],
-                purchase['items'],
+                data['purchases'][i]['date'],
+                data['purchases'][i]['place'],
+                data['purchases'][i]['items'],
                 f"${amount:.2f}"
             ])
-    
-    # Add empty row if no purchases
-    if len(purchase_data) == 1:
-        purchase_data.append(['', '', '', ''])
+        else:
+            purchase_data.append(['', '', '', ''])
     
     purchase_data.append(['', '', 'Total All Items Purchased', f"${total_purchases:.2f}"])
     
@@ -201,23 +165,23 @@ def generate_expense_report(data, supporting_files):
     total_miles = 0.0
     total_mileage_cost = 0.0
     
-    for mileage in data['mileage']:
-        if mileage['date']:
-            miles = float(mileage['miles']) if mileage['miles'] else 0.0
+    for i in range(4):
+        # Check if any mileage field is filled
+        if (data['mileage'][i]['date'] or data['mileage'][i]['start'] or 
+            data['mileage'][i]['destination'] or data['mileage'][i]['miles']):
+            miles = float(data['mileage'][i]['miles']) if data['mileage'][i]['miles'] else 0.0
             cost = miles * MILEAGE_RATE
             total_miles += miles
             total_mileage_cost += cost
             mileage_data.append([
-                mileage['date'],
-                mileage['start'],
-                mileage['destination'],
+                data['mileage'][i]['date'],
+                data['mileage'][i]['start'],
+                data['mileage'][i]['destination'],
                 f"{miles:.2f}" if miles else '',
                 f"${cost:.2f}"
             ])
-    
-    # Add empty row if no mileage
-    if len(mileage_data) == 1:
-        mileage_data.append(['', '', '', '', ''])
+        else:
+            mileage_data.append(['', '', '', '', ''])
     
     mileage_data.append(['', '', 'All Miles Total', f"{total_miles:.2f}", f"${total_mileage_cost:.2f}"])
     
@@ -307,7 +271,7 @@ def generate_expense_report(data, supporting_files):
     
     # Build PDF
     doc.build(story)
-    return report_id, report_filename
+    return report_id
 
 @app.route('/')
 def index():
@@ -319,49 +283,31 @@ def submit():
     try:
         # Collect form data
         data = {
-            'requestor_first': request.form.get('requestor_first', ''),
-            'requestor_last': request.form.get('requestor_last', ''),
-            'email': request.form.get('email', ''),
-            'troop_number': request.form.get('troop_number', ''),
-            'event_name': request.form.get('event_name', ''),
-            'event_date': request.form.get('event_date', ''),
+            'requester': request.form.get('requester', ''),
+            'event_dates': request.form.get('event_dates', ''),
             'reason': request.form.get('reason', ''),
             'date_submitted': request.form.get('date_submitted', ''),
             'purchases': [],
             'mileage': []
         }
         
-        # Collect purchase data (dynamic number of rows)
-        i = 0
-        while True:
-            date = request.form.get(f'purchase_date_{i}', None)
-            if date is None:
-                break
-            
-            if date:  # Only add if date is provided
-                data['purchases'].append({
-                    'date': date,
-                    'place': request.form.get(f'purchase_place_{i}', ''),
-                    'items': request.form.get(f'purchase_items_{i}', ''),
-                    'amount': request.form.get(f'purchase_amount_{i}', '')
-                })
-            i += 1
+        # Collect purchase data
+        for i in range(5):
+            data['purchases'].append({
+                'date': request.form.get(f'purchase_date_{i}', ''),
+                'place': request.form.get(f'purchase_place_{i}', ''),
+                'items': request.form.get(f'purchase_items_{i}', ''),
+                'amount': request.form.get(f'purchase_amount_{i}', '')
+            })
         
-        # Collect mileage data (dynamic number of rows)
-        i = 0
-        while True:
-            date = request.form.get(f'mileage_date_{i}', None)
-            if date is None:
-                break
-            
-            if date:  # Only add if date is provided
-                data['mileage'].append({
-                    'date': date,
-                    'start': request.form.get(f'mileage_start_{i}', ''),
-                    'destination': request.form.get(f'mileage_dest_{i}', ''),
-                    'miles': request.form.get(f'mileage_miles_{i}', '')
-                })
-            i += 1
+        # Collect mileage data
+        for i in range(4):
+            data['mileage'].append({
+                'date': request.form.get(f'mileage_date_{i}', ''),
+                'start': request.form.get(f'mileage_start_{i}', ''),
+                'destination': request.form.get(f'mileage_dest_{i}', ''),
+                'miles': request.form.get(f'mileage_miles_{i}', '')
+            })
         
         # Handle file uploads
         uploaded_files = []
@@ -376,23 +322,22 @@ def submit():
                 uploaded_files.append(filepath)
         
         # Generate PDF
-        report_id, report_filename = generate_expense_report(data, uploaded_files)
+        report_id = generate_expense_report(data, uploaded_files)
         
-        return redirect(url_for('download', report_id=report_id, filename=report_filename))
+        return redirect(url_for('download', report_id=report_id))
     
     except Exception as e:
         return f"Error generating report: {str(e)}", 500
 
 @app.route('/download/<report_id>')
 def download(report_id):
-    filename = request.args.get('filename', f'expense_report_{report_id}.pdf')
-    return render_template('download.html', report_id=report_id, filename=filename)
+    return render_template('download.html', report_id=report_id)
 
-@app.route('/get_report/<filename>')
-def get_report(filename):
-    report_path = os.path.join(app.config['REPORT_FOLDER'], filename)
+@app.route('/get_report/<report_id>')
+def get_report(report_id):
+    report_path = os.path.join(app.config['REPORT_FOLDER'], f"expense_report_{report_id}.pdf")
     if os.path.exists(report_path):
-        return send_file(report_path, as_attachment=True, download_name=filename)
+        return send_file(report_path, as_attachment=True, download_name=f"Troop233_Expense_Report_{report_id[:8]}.pdf")
     return "Report not found", 404
 
 if __name__ == '__main__':

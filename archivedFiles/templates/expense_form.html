@@ -12,11 +12,10 @@
         }
         
         body {
-            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            background: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #81613C 0%, #fdf4e3 100%);
             padding: 20px;
             min-height: 100vh;
-            line-height: 1.6;
         }
         
         .container {
@@ -24,29 +23,27 @@
             margin: 0 auto;
             background: white;
             padding: 40px;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 3px solid #CE1126;
+            border-bottom: 3px solid #81613C;
             padding-bottom: 20px;
         }
         
         .header h1 {
-            color: #003f87;
+            color: #333;
             font-size: 2.5em;
             margin-bottom: 5px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
         }
         
         .header h2 {
-            color: #4a4a4a;
-            font-size: 1.4em;
-            font-weight: 400;
+            color: #81613C;
+            font-size: 1.5em;
+            font-weight: normal;
         }
         
         .form-section {
@@ -54,13 +51,12 @@
         }
         
         .form-section h3 {
-            background: #003f87;
+            background: #81613C;
             color: white;
             padding: 12px 20px;
-            border-radius: 4px;
+            border-radius: 5px;
             margin-bottom: 20px;
             font-size: 1.2em;
-            font-weight: 600;
         }
         
         .form-group {
@@ -90,9 +86,9 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
             font-size: 1em;
-            transition: border-color 0.2s;
+            transition: border-color 0.3s;
         }
         
         input[type="text"]:focus,
@@ -102,7 +98,7 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #003f87;
+            border-color: #81613C;
         }
         
         select {
@@ -126,7 +122,7 @@
         }
         
         table th {
-            background: #003f87;
+            background: #81613C;
             color: white;
             padding: 12px;
             text-align: left;
@@ -145,68 +141,57 @@
             border-radius: 3px;
         }
         
-        table input:focus {
-            outline: none;
-            border-color: #003f87;
-        }
-        
         table tr:hover {
-            background: #f9f9f9;
+            background: #f8f9ff;
         }
         
         .add-row-btn {
-            background: #003f87;
+            background: #81613C;
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             font-size: 1em;
-            font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
-            transition: background 0.2s;
+            transition: background 0.3s;
         }
         
         .add-row-btn:hover {
-            background: #002d5f;
+            background: #6b5030;
         }
         
         .remove-row-btn {
-            background: #CE1126;
+            background: #d9534f;
             color: white;
             padding: 5px 10px;
             border: none;
             border-radius: 3px;
             cursor: pointer;
             font-size: 0.9em;
-            font-weight: 600;
-            transition: background 0.2s;
         }
         
         .remove-row-btn:hover {
-            background: #a40f1e;
+            background: #c9302c;
         }
         
         .submit-btn {
-            background: #CE1126;
+            background: linear-gradient(135deg, #42813c 0%, #0022ff 100%);
             color: white;
             padding: 15px 40px;
-            border: 2px solid #CE1126;
-            border-radius: 4px;
+            border: none;
+            border-radius: 5px;
             font-size: 1.2em;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             margin-top: 20px;
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         
         .submit-btn:hover {
-            background: #a40f1e;
-            border-color: #a40f1e;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(206, 17, 38, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
         }
         
         .submit-btn:active {
@@ -214,35 +199,30 @@
         }
         
         .file-upload-section {
-            background: #f9f9f9;
+            background: #f8f9ff;
             padding: 20px;
-            border-radius: 4px;
-            border: 2px dashed #FDB813;
+            border-radius: 5px;
+            border: 2px dashed #81613C;
         }
         
         .info-box {
-            background: #fffaeb;
-            border-left: 4px solid #FDB813;
+            background: #fdf4e3;
+            border-left: 4px solid #a70000;
             padding: 15px;
             margin-bottom: 20px;
-            border-radius: 4px;
+            border-radius: 5px;
         }
         
         .info-box p {
             margin: 5px 0;
-            color: #7a6a1f;
-        }
-        
-        .info-box strong {
-            color: #5a4a1a;
+            color: #a70000;
         }
         
         .totals-display {
-            background: #f9f9f9;
+            background: #f5f5f5;
             padding: 20px;
-            border-radius: 4px;
+            border-radius: 5px;
             margin-top: 20px;
-            border-left: 4px solid #003f87;
         }
         
         .total-row {
@@ -253,12 +233,12 @@
         }
         
         .total-row.grand-total {
-            border-top: 3px solid #003f87;
+            border-top: 3px solid #81613C;
             margin-top: 10px;
             padding-top: 15px;
             font-weight: bold;
             font-size: 1.3em;
-            color: #003f87;
+            color: #81613C;
         }
         
         @media (max-width: 768px) {
