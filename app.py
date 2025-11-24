@@ -75,7 +75,7 @@ def sanitize_filename(text):
     text = re.sub(r'[^\w\-]', '', text)
     return text
 
-def generate_expense_report(data, supporting_files):
+def generate_expense_report(data, purchase_documents, signature_data):
     """Generate PDF expense report"""
     report_id = str(uuid.uuid4())
     
@@ -138,7 +138,7 @@ def generate_expense_report(data, supporting_files):
         ['Event Name:', data['event_name']],
         ['Event Date:', data['event_date']],
         ['Reason / Description:', Paragraph(data['reason'], header_style)],
-        ['Date Submitted:', data['date_submitted']]
+        ['Date Created:', data['date_created']]
     ]
     
     event_table = Table(event_data, colWidths=[2*inch, 4.5*inch])
@@ -251,45 +251,87 @@ def generate_expense_report(data, supporting_files):
         ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
     ]))
     story.append(total_table)
+    story.append(Spacer(1, 0.3*inch))
     
-    # Supporting Documents
-    if supporting_files:
+    # Signature Section
+    if signature_data:
+        signature_style = ParagraphStyle(
+            'SignatureStyle',
+            parent=styles['Normal'],
+            fontSize=11,
+            spaceAfter=8
+        )
+        
+        story.append(Paragraph("SIGNATURE AND ACKNOWLEDGMENT", title_style))
+        story.append(Spacer(1, 0.15*inch))
+        
+        story.append(Paragraph("By submitting this expense reimbursement report, I affirm that:", signature_style))
+        story.append(Paragraph("• All information provided is true, honest, and accurate to the best of my knowledge", signature_style))
+        story.append(Paragraph("• All expenses listed were incurred for legitimate Troop 233/2233 activities", signature_style))
+        story.append(Paragraph("• I have provided accurate receipts and supporting documentation", signature_style))
+        story.append(Paragraph("• I understand this submission is made in accordance with the Scout Law", signature_style))
+        story.append(Spacer(1, 0.15*inch))
+        
+        scout_law_text = "<b>Scout Law:</b> <i>A Scout is Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, and Reverent.</i>"
+        story.append(Paragraph(scout_law_text, signature_style))
+        story.append(Spacer(1, 0.2*inch))
+        
+        # Signature table
+        signature_table_data = [
+            ['Electronic Signature:', signature_data['name']],
+            ['Date Signed:', signature_data['date']],
+            ['Acknowledgment:', 'Confirmed in accordance with Scout Law']
+        ]
+        
+        sig_table = Table(signature_table_data, colWidths=[2*inch, 4.5*inch])
+        sig_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTNAME', (1, 0), (1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        story.append(sig_table)
+    
+    # Supporting Documents - organized by purchase
+    if purchase_documents:
         story.append(PageBreak())
         story.append(Paragraph("SUPPORTING DOCUMENTS", title_style))
         story.append(Spacer(1, 0.2*inch))
         
-        for file_path in supporting_files:
-            try:
-                # Handle images
-                if file_path.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):
-                    img = PILImage.open(file_path)
-                    img_width, img_height = img.size
-                    
-                    # Scale image to fit page
-                    max_width = 6.5 * inch
-                    max_height = 8 * inch
-                    
-                    aspect = img_height / float(img_width)
-                    if img_width > max_width:
-                        img_width = max_width
-                        img_height = img_width * aspect
-                    
-                    if img_height > max_height:
-                        img_height = max_height
-                        img_width = img_height / aspect
-                    
-                    story.append(Image(file_path, width=img_width, height=img_height))
-                    story.append(Spacer(1, 0.2*inch))
+        # Iterate through purchases and their documents
+        for purchase_index, purchase in enumerate(data['purchases']):
+            if purchase['date'] and purchase_index in purchase_documents:
+                # Add purchase info header
+                purchase_header = f"Purchase #{purchase_index + 1}: {purchase['items']} - ${purchase['amount']}"
+                purchase_header_para = Paragraph(purchase_header, ParagraphStyle(
+                    'PurchaseHeader',
+                    parent=styles['Normal'],
+                    fontSize=12,
+                    fontName='Helvetica-Bold',
+                    textColor=colors.HexColor('#003f87'),
+                    spaceAfter=10
+                ))
+                story.append(purchase_header_para)
                 
-                # Handle PDFs converted to images
-                elif file_path.lower().endswith('.pdf'):
-                    pdf_images = convert_pdf_to_images(file_path, app.config['UPLOAD_FOLDER'])
-                    for pdf_img in pdf_images:
-                        img = PILImage.open(pdf_img)
+                file_path = purchase_documents[purchase_index]
+                try:
+                    # Handle images
+                    if file_path.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):
+                        img = PILImage.open(file_path)
                         img_width, img_height = img.size
                         
+                        # Scale image to fit page
                         max_width = 6.5 * inch
-                        max_height = 8 * inch
+                        max_height = 7 * inch
                         
                         aspect = img_height / float(img_width)
                         if img_width > max_width:
@@ -300,10 +342,36 @@ def generate_expense_report(data, supporting_files):
                             img_height = max_height
                             img_width = img_height / aspect
                         
-                        story.append(Image(pdf_img, width=img_width, height=img_height))
-                        story.append(Spacer(1, 0.2*inch))
-            except Exception as e:
-                print(f"Error adding file {file_path}: {e}")
+                        story.append(Image(file_path, width=img_width, height=img_height))
+                        story.append(Spacer(1, 0.3*inch))
+                    
+                    # Handle PDFs converted to images
+                    elif file_path.lower().endswith('.pdf'):
+                        pdf_images = convert_pdf_to_images(file_path, app.config['UPLOAD_FOLDER'])
+                        for pdf_img in pdf_images:
+                            img = PILImage.open(pdf_img)
+                            img_width, img_height = img.size
+                            
+                            max_width = 6.5 * inch
+                            max_height = 7 * inch
+                            
+                            aspect = img_height / float(img_width)
+                            if img_width > max_width:
+                                img_width = max_width
+                                img_height = img_width * aspect
+                            
+                            if img_height > max_height:
+                                img_height = max_height
+                                img_width = img_height / aspect
+                            
+                            story.append(Image(pdf_img, width=img_width, height=img_height))
+                            story.append(Spacer(1, 0.2*inch))
+                except Exception as e:
+                    print(f"Error adding file {file_path}: {e}")
+                
+                # Add page break between purchases if not the last one
+                if purchase_index < len([p for p in data['purchases'] if p['date']]) - 1:
+                    story.append(PageBreak())
     
     # Build PDF
     doc.build(story)
@@ -326,12 +394,22 @@ def submit():
             'event_name': request.form.get('event_name', ''),
             'event_date': request.form.get('event_date', ''),
             'reason': request.form.get('reason', ''),
-            'date_submitted': request.form.get('date_submitted', ''),
+            'date_created': request.form.get('date_created', ''),
             'purchases': [],
             'mileage': []
         }
         
-        # Collect purchase data (dynamic number of rows)
+        # Collect signature data
+        signature_data = {
+            'name': request.form.get('signature_name', ''),
+            'date': datetime.now().strftime('%B %d, %Y at %I:%M %p'),
+            'acknowledgment': request.form.get('signature_acknowledgment', '') == 'on'
+        }
+        
+        # Dictionary to store purchase documents mapped to their index
+        purchase_documents = {}
+        
+        # Collect purchase data and associated files
         i = 0
         while True:
             date = request.form.get(f'purchase_date_{i}', None)
@@ -342,9 +420,21 @@ def submit():
                 data['purchases'].append({
                     'date': date,
                     'place': request.form.get(f'purchase_place_{i}', ''),
-                    'items': request.form.get(f'purchase_items_{i}', ''),
+                    'items': request.form.get(f'items_summary_{i}', ''),
                     'amount': request.form.get(f'purchase_amount_{i}', '')
                 })
+                
+                # Handle file upload for this specific purchase
+                file_key = f'purchase_doc_{i}'
+                if file_key in request.files:
+                    file = request.files[file_key]
+                    if file and file.filename and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        unique_filename = f"{uuid.uuid4()}_{filename}"
+                        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                        file.save(filepath)
+                        # Map the file to this purchase index
+                        purchase_documents[len(data['purchases']) - 1] = filepath
             i += 1
         
         # Collect mileage data (dynamic number of rows)
@@ -363,20 +453,8 @@ def submit():
                 })
             i += 1
         
-        # Handle file uploads
-        uploaded_files = []
-        files = request.files.getlist('supporting_docs')
-        
-        for file in files:
-            if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                unique_filename = f"{uuid.uuid4()}_{filename}"
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-                file.save(filepath)
-                uploaded_files.append(filepath)
-        
         # Generate PDF
-        report_id, report_filename = generate_expense_report(data, uploaded_files)
+        report_id, report_filename = generate_expense_report(data, purchase_documents, signature_data)
         
         return redirect(url_for('download', report_id=report_id, filename=report_filename))
     

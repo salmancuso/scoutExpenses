@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Troop 233 & 2233 - Expense Reimbursement Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #CE1126;
+            padding-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #003f87;
+            font-size: 2.5em;
+            margin-bottom: 5px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .header h2 {
+            color: #4a4a4a;
+            font-size: 1.4em;
+            font-weight: 400;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+        }
+        
+        .form-section h3 {
+            background: #003f87;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+            transition: border-color 0.2s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #003f87;
+        }
+        
+        select {
+            cursor: pointer;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .table-section {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        
+        table th {
+            background: #003f87;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        
+        table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        
+        table input:focus {
+            outline: none;
+            border-color: #003f87;
+        }
+        
+        table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .add-row-btn {
+            background: #003f87;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        
+        .add-row-btn:hover {
+            background: #002d5f;
+        }
+        
+        .remove-row-btn {
+            background: #CE1126;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .remove-row-btn:hover {
+            background: #a40f1e;
+        }
+        
+        .submit-btn {
+            background: #CE1126;
+            color: white;
+            padding: 15px 40px;
+            border: 2px solid #CE1126;
+            border-radius: 4px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .submit-btn:hover {
+            background: #a40f1e;
+            border-color: #a40f1e;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(206, 17, 38, 0.3);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .file-upload-section {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            border: 2px dashed #FDB813;
+        }
+        
+        .info-box {
+            background: #fffaeb;
+            border-left: 4px solid #FDB813;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .info-box p {
+            margin: 5px 0;
+            color: #7a6a1f;
+        }
+        
+        .info-box strong {
+            color: #5a4a1a;
+        }
+        
+        .totals-display {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+            border-left: 4px solid #003f87;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 1.1em;
+        }
+        
+        .total-row.grand-total {
+            border-top: 3px solid #003f87;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            font-size: 1.3em;
+            color: #003f87;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            .submit-btn {
+                padding: 12px 30px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏕️ Troop 233 & 2233 🪵</h1>
+            <h2>Expense Reimbursement Form</h2>
+        </div>
+        
+        <form id="expenseForm" method="POST" action="/tools/scoutExpenses/submit" enctype="multipart/form-data">
+            <!-- Event Information -->
+            <div class="form-section">
+                <h3>Event Information</h3>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="requestor_first">Requestor First Name: *</label>
+                        <input type="text" id="requestor_first" name="requestor_first" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="requestor_last">Requestor Last Name: *</label>
+                        <input type="text" id="requestor_last" name="requestor_last" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address: *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="troop_number">Troop #: *</label>
+                        <select id="troop_number" name="troop_number" required>
+                            <option value="">Select Troop</option>
+                            <option value="233">233</option>
+                            <option value="2233">2233</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="event_date">Event Date: *</label>
+                        <input type="date" id="event_date" name="event_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="event_name">Event Name: *</label>
+                    <input type="text" id="event_name" name="event_name" placeholder="e.g., Mystery Trip, Summer Camp" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reason">Reason / Description: *</label>
+                    <textarea id="reason" name="reason" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="date_submitted">Date Report Created: *</label>
+                    <input type="date" id="date_submitted" name="date_submitted" required readonly>
+                </div>
+            </div>
+            
+            <!-- Purchases Section -->
+            <div class="form-section">
+                <h3>Items Purchased</h3>
+                <div class="info-box">
+                    <p><strong>⚠️ Instructions:</strong> Click "Add Row" to add more purchase line items. If you enter data in one field of a row, all fields in that row must be completed.</p>
+                </div>
+                
+                <div class="table-section">
+                    <table id="purchasesTable">
+                        <thead>
+                            <tr>
+                                <th>Date Purchased</th>
+                                <th>Place Purchased</th>
+                                <th>Items Purchased</th>
+                                <th>$ Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="purchasesBody">
+                            <tr class="purchase-row">
+                                <td><input type="date" name="purchase_date_0" class="purchase-date"></td>
+                                <td><input type="text" name="purchase_place_0" class="purchase-place"></td>
+                                <td><input type="text" name="purchase_items_0" class="purchase-items"></td>
+                                <td><input type="number" step="0.01" name="purchase_amount_0" class="purchase-amount" data-index="0"></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="add-row-btn" onclick="addPurchaseRow()">+ Add Row</button>
+            </div>
+            
+            <!-- Mileage Section -->
+            <div class="form-section">
+                <h3>Mileage Reimbursement</h3>
+                <div class="info-box">
+                    <p><strong>Current Rate:</strong> $0.625 per mile</p>
+                    <p><strong>⚠️ Instructions:</strong> Click "Add Row" to add more mileage line items. If you enter data in one field of a row, all fields in that row must be completed.</p>
+                </div>
+                
+                <div class="table-section">
+                    <table id="mileageTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Start Location</th>
+                                <th>Destination</th>
+                                <th>Miles</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mileageBody">
+                            <tr class="mileage-row">
+                                <td><input type="date" name="mileage_date_0" class="mileage-date"></td>
+                                <td><input type="text" name="mileage_start_0" class="mileage-start"></td>
+                                <td><input type="text" name="mileage_dest_0" class="mileage-dest"></td>
+                                <td><input type="number" step="0.01" name="mileage_miles_0" class="mileage-miles" data-index="0"></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button type="button" class="add-row-btn" onclick="addMileageRow()">+ Add Row</button>
+            </div>
+            
+            <!-- Supporting Documents Section -->
+            <div class="form-section">
+                <h3>Supporting Documents</h3>
+                <div class="info-box">
+                    <p><strong>Accepted formats:</strong> JPEG, JPG, PNG, TIFF, PDF.</p>
+                    <p><strong>⚠️ IMPORTANT Instructions ⚠️:</strong> To upload multiple receipts, you must select ALL files at once using Ctrl+Click (Windows) or Cmd+Click (Mac) in the file picker. Selecting files one at a time will not work.Upload receipts for all purchases (required). Mileage claims do not require supporting documents.</p>
+                </div>
+                
+                <div class="file-upload-section">
+                    <div class="form-group">
+                        <label for="supporting_docs">Upload Supporting Documents:</label>
+                        <input type="file" id="supporting_docs" name="supporting_docs" multiple 
+                               accept=".jpg,.jpeg,.png,.tiff,.pdf">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Totals Display -->
+            <div class="totals-display">
+                <div class="total-row">
+                    <span>Total Purchases:</span>
+                    <span id="total-purchases">$0.00</span>
+                </div>
+                <div class="total-row">
+                    <span>Total Mileage (<span id="total-miles">0.00</span> miles @ $0.625):</span>
+                    <span id="total-mileage">$0.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>GRAND TOTAL:</span>
+                    <span id="grand-total">$0.00</span>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">Generate Expense Report</button>
+        </form>
+    </div>
+    
+    <script>
+        let purchaseRowCount = 1;
+        let mileageRowCount = 1;
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Set max date to today for all date fields
+        function setMaxDate() {
+            document.querySelectorAll('input[type="date"]').forEach(input => {
+                input.max = today;
+            });
+        }
+        
+        // Add purchase row
+        function addPurchaseRow() {
+            const tbody = document.getElementById('purchasesBody');
+            const row = document.createElement('tr');
+            row.className = 'purchase-row';
+            row.innerHTML = `
+                <td><input type="date" name="purchase_date_${purchaseRowCount}" class="purchase-date" max="${today}"></td>
+                <td><input type="text" name="purchase_place_${purchaseRowCount}" class="purchase-place"></td>
+                <td><input type="text" name="purchase_items_${purchaseRowCount}" class="purchase-items"></td>
+                <td><input type="number" step="0.01" name="purchase_amount_${purchaseRowCount}" class="purchase-amount" data-index="${purchaseRowCount}"></td>
+                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remove</button></td>
+            `;
+            tbody.appendChild(row);
+            purchaseRowCount++;
+            
+            // Add event listeners to new row
+            row.querySelectorAll('.purchase-amount').forEach(input => {
+                input.addEventListener('input', updateTotals);
+            });
+        }
+        
+        // Add mileage row
+        function addMileageRow() {
+            const tbody = document.getElementById('mileageBody');
+            const row = document.createElement('tr');
+            row.className = 'mileage-row';
+            row.innerHTML = `
+                <td><input type="date" name="mileage_date_${mileageRowCount}" class="mileage-date" max="${today}"></td>
+                <td><input type="text" name="mileage_start_${mileageRowCount}" class="mileage-start"></td>
+                <td><input type="text" name="mileage_dest_${mileageRowCount}" class="mileage-dest"></td>
+                <td><input type="number" step="0.01" name="mileage_miles_${mileageRowCount}" class="mileage-miles" data-index="${mileageRowCount}"></td>
+                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remove</button></td>
+            `;
+            tbody.appendChild(row);
+            mileageRowCount++;
+            
+            // Add event listeners to new row
+            row.querySelectorAll('.mileage-miles').forEach(input => {
+                input.addEventListener('input', updateTotals);
+            });
+        }
+        
+        // Remove row
+        function removeRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            updateTotals();
+        }
+        
+        // Auto-calculate totals
+        function updateTotals() {
+            let totalPurchases = 0;
+            let totalMiles = 0;
+            const mileageRate = 0.625;
+            
+            // Calculate purchases
+            document.querySelectorAll('.purchase-amount').forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                totalPurchases += value;
+            });
+            
+            // Calculate mileage
+            document.querySelectorAll('.mileage-miles').forEach(input => {
+                const value = parseFloat(input.value) || 0;
+                totalMiles += value;
+            });
+            
+            const totalMileage = totalMiles * mileageRate;
+            const grandTotal = totalPurchases + totalMileage;
+            
+            // Update display
+            document.getElementById('total-purchases').textContent = `$${totalPurchases.toFixed(2)}`;
+            document.getElementById('total-miles').textContent = totalMiles.toFixed(2);
+            document.getElementById('total-mileage').textContent = `$${totalMileage.toFixed(2)}`;
+            document.getElementById('grand-total').textContent = `$${grandTotal.toFixed(2)}`;
+        }
+        
+        // Validate row completeness
+        function validateRowCompleteness() {
+            let errors = [];
+            
+            // Validate purchase rows
+            document.querySelectorAll('.purchase-row').forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                const values = Array.from(inputs).map(input => input.value.trim());
+                const filledCount = values.filter(v => v !== '').length;
+                
+                if (filledCount > 0 && filledCount < 4) {
+                    errors.push(`Purchase row ${index + 1}: All fields must be completed if any field is filled.`);
+                }
+            });
+            
+            // Validate mileage rows
+            document.querySelectorAll('.mileage-row').forEach((row, index) => {
+                const inputs = row.querySelectorAll('input');
+                const values = Array.from(inputs).map(input => input.value.trim());
+                const filledCount = values.filter(v => v !== '').length;
+                
+                if (filledCount > 0 && filledCount < 4) {
+                    errors.push(`Mileage row ${index + 1}: All fields must be completed if any field is filled.`);
+                }
+            });
+            
+            return errors;
+        }
+        
+        // Add event listeners
+        document.querySelectorAll('.purchase-amount, .mileage-miles').forEach(input => {
+            input.addEventListener('input', updateTotals);
+        });
+        
+        // Set default date to today and max dates
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('date_submitted').valueAsDate = new Date();
+            setMaxDate();
+        });
+        
+        // Form validation
+        document.getElementById('expenseForm').addEventListener('submit', function(e) {
+            // Check row completeness
+            const rowErrors = validateRowCompleteness();
+            if (rowErrors.length > 0) {
+                e.preventDefault();
+                alert('Please complete all fields in partially filled rows:\n\n' + rowErrors.join('\n'));
+                return false;
+            }
+            
+            // Check if at least one purchase or mileage exists
+            const hasPurchase = Array.from(document.querySelectorAll('.purchase-amount')).some(input => {
+                return parseFloat(input.value) > 0;
+            });
+            
+            const hasMileage = Array.from(document.querySelectorAll('.mileage-miles')).some(input => {
+                return parseFloat(input.value) > 0;
+            });
+            
+            if (!hasPurchase && !hasMileage) {
+                e.preventDefault();
+                alert('Please enter at least one purchase or mileage item.');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>
