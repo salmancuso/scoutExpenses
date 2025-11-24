@@ -12,10 +12,11 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #81613C 0%, #fdf4e3 100%);
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
             padding: 20px;
             min-height: 100vh;
+            line-height: 1.6;
         }
         
         .container {
@@ -23,27 +24,29 @@
             margin: 0 auto;
             background: white;
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
-            border-bottom: 3px solid #81613C;
+            border-bottom: 3px solid #CE1126;
             padding-bottom: 20px;
         }
         
         .header h1 {
-            color: #333;
+            color: #003f87;
             font-size: 2.5em;
             margin-bottom: 5px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
         
         .header h2 {
-            color: #81613C;
-            font-size: 1.5em;
-            font-weight: normal;
+            color: #4a4a4a;
+            font-size: 1.4em;
+            font-weight: 400;
         }
         
         .form-section {
@@ -51,12 +54,13 @@
         }
         
         .form-section h3 {
-            background: #81613C;
+            background: #003f87;
             color: white;
             padding: 12px 20px;
-            border-radius: 5px;
+            border-radius: 4px;
             margin-bottom: 20px;
             font-size: 1.2em;
+            font-weight: 600;
         }
         
         .form-group {
@@ -86,9 +90,9 @@
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 1em;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
         }
         
         input[type="text"]:focus,
@@ -98,7 +102,7 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: #81613C;
+            border-color: #003f87;
         }
         
         select {
@@ -122,7 +126,7 @@
         }
         
         table th {
-            background: #81613C;
+            background: #003f87;
             color: white;
             padding: 12px;
             text-align: left;
@@ -134,114 +138,262 @@
             border: 1px solid #ddd;
         }
         
-        table input {
+        table input[type="text"],
+        table input[type="date"],
+        table input[type="number"] {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 3px;
         }
         
+        table input[type="file"] {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        table input:focus {
+            outline: none;
+            border-color: #003f87;
+        }
+        
         table tr:hover {
-            background: #f8f9ff;
+            background: #f9f9f9;
+        }
+        
+        .purchase-row-container {
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #fafafa;
+        }
+        
+        .purchase-row-container:hover {
+            border-color: #003f87;
+            background: #f5f5f5;
+        }
+        
+        .purchase-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #003f87;
+        }
+        
+        .purchase-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .purchase-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .purchase-field label {
+            font-size: 0.85em;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        
+        .purchase-upload {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border: 2px dashed #FDB813;
+            border-radius: 4px;
+        }
+        
+        .purchase-upload label {
+            font-size: 0.9em;
+            color: #555;
         }
         
         .add-row-btn {
-            background: #81613C;
+            background: #003f87;
             color: white;
             padding: 10px 20px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             font-size: 1em;
+            font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
-            transition: background 0.3s;
+            transition: background 0.2s;
         }
         
         .add-row-btn:hover {
-            background: #6b5030;
+            background: #002d5f;
         }
         
         .remove-row-btn {
-            background: #d9534f;
+            background: #CE1126;
             color: white;
-            padding: 5px 10px;
+            padding: 5px 15px;
             border: none;
             border-radius: 3px;
             cursor: pointer;
             font-size: 0.9em;
+            font-weight: 600;
+            transition: background 0.2s;
         }
         
         .remove-row-btn:hover {
-            background: #c9302c;
+            background: #a40f1e;
+        }
+        
+        .signature-section {
+            background: #fffaeb;
+            border: 3px solid #FDB813;
+            padding: 25px;
+            border-radius: 4px;
+            margin: 30px 0;
+        }
+        
+        .signature-section h3 {
+            color: #003f87;
+            background: none;
+            padding: 0;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .signature-section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        .signature-section .scout-law {
+            background: white;
+            padding: 15px;
+            border-left: 4px solid #003f87;
+            margin: 15px 0;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .checkbox-group {
+            margin: 15px 0;
+        }
+        
+        .checkbox-group label {
+            display: flex;
+            align-items: start;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            margin-top: 2px;
+            cursor: pointer;
         }
         
         .submit-btn {
-            background: linear-gradient(135deg, #42813c 0%, #0022ff 100%);
+            background: #CE1126;
             color: white;
             padding: 15px 40px;
-            border: none;
-            border-radius: 5px;
+            border: 2px solid #CE1126;
+            border-radius: 4px;
             font-size: 1.2em;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
             margin-top: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
         }
         
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        .submit-btn:hover:not(:disabled) {
+            background: #a40f1e;
+            border-color: #a40f1e;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(206, 17, 38, 0.3);
         }
         
         .submit-btn:active {
             transform: translateY(0);
         }
         
-        .file-upload-section {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 5px;
-            border: 2px dashed #81613C;
+        .submit-btn:disabled {
+            background: #999;
+            border-color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
         
         .info-box {
-            background: #fdf4e3;
-            border-left: 4px solid #a70000;
+            background: #fffaeb;
+            border-left: 4px solid #FDB813;
             padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 5px;
+            margin-bottom: 15px;
+            border-radius: 4px;
         }
         
         .info-box p {
-            margin: 5px 0;
-            color: #a70000;
+            margin: 8px 0;
+            color: #555;
+        }
+        
+        .info-box strong {
+            color: #003f87;
+        }
+        
+        .warning-box {
+            background: #ffebee;
+            border-left: 4px solid #CE1126;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box p {
+            margin: 8px 0;
+            color: #c62828;
         }
         
         .totals-display {
             background: #f5f5f5;
             padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
+            border-radius: 4px;
+            margin-top: 30px;
         }
         
         .total-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            font-size: 1.1em;
+            border-bottom: 1px solid #ddd;
+            font-size: 1em;
         }
         
         .total-row.grand-total {
-            border-top: 3px solid #81613C;
+            border-bottom: none;
+            border-top: 3px solid #003f87;
             margin-top: 10px;
             padding-top: 15px;
-            font-weight: bold;
             font-size: 1.3em;
-            color: #81613C;
+            font-weight: bold;
+            color: #003f87;
         }
         
+        /* Mobile Responsiveness */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
             .container {
                 padding: 20px;
             }
@@ -250,17 +402,85 @@
                 font-size: 1.8em;
             }
             
+            .header h2 {
+                font-size: 1.1em;
+            }
+            
             .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .purchase-fields {
                 grid-template-columns: 1fr;
             }
             
+            .table-section {
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+            
             table {
-                font-size: 0.9em;
+                min-width: 600px;
+            }
+            
+            .form-section h3 {
+                font-size: 1em;
+                padding: 10px 15px;
+            }
+            
+            input[type="text"],
+            input[type="email"],
+            input[type="date"],
+            input[type="number"],
+            textarea,
+            select {
+                font-size: 16px; /* Prevents iOS zoom on focus */
             }
             
             .submit-btn {
-                padding: 12px 30px;
+                font-size: 1.1em;
+                padding: 14px 30px;
+            }
+            
+            .totals-display {
+                padding: 15px;
+            }
+            
+            .total-row {
+                font-size: 0.95em;
+            }
+            
+            .total-row.grand-total {
+                font-size: 1.15em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .header h2 {
                 font-size: 1em;
+            }
+            
+            .purchase-row-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 10px;
+            }
+            
+            .signature-section {
+                padding: 15px;
+            }
+            
+            .checkbox-group label {
+                font-size: 0.95em;
             }
         }
     </style>
@@ -268,42 +488,52 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🏕️ Troop 233 & 2233 🪵</h1>
+            <h1>TROOP 233 & 2233</h1>
             <h2>Expense Reimbursement Form</h2>
         </div>
         
         <form id="expenseForm" method="POST" action="/tools/scoutExpenses/submit" enctype="multipart/form-data">
-            <!-- Event Information -->
+            <!-- Requestor Information -->
             <div class="form-section">
-                <h3>Event Information</h3>
-                
+                <h3>Requestor Information</h3>
+                <div class="warning-box">
+                    <p><strong>⚠️ IMPORTANT:</strong> Reimbursement will be credited to the Requestor's account in Troopweb.</p>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="requestor_first">Requestor First Name: *</label>
+                        <label for="requestor_first">First Name: *</label>
                         <input type="text" id="requestor_first" name="requestor_first" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="requestor_last">Requestor Last Name: *</label>
+                        <label for="requestor_last">Last Name: *</label>
                         <input type="text" id="requestor_last" name="requestor_last" required>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="email">Email Address: *</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-                
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="troop_number">Troop #: *</label>
+                        <label for="email">Email Address: *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="troop_number">Troop Number: *</label>
                         <select id="troop_number" name="troop_number" required>
                             <option value="">Select Troop</option>
-                            <option value="233">233</option>
-                            <option value="2233">2233</option>
+                            <option value="233">Troop 233</option>
+                            <option value="2233">Troop 2233</option>
                         </select>
                     </div>
-                    
+                </div>
+            </div>
+            
+            <!-- Event Information -->
+            <div class="form-section">
+                <h3>Event Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="event_name">Event Name: *</label>
+                        <input type="text" id="event_name" name="event_name" required>
+                    </div>
                     <div class="form-group">
                         <label for="event_date">Event Date: *</label>
                         <input type="date" id="event_date" name="event_date" required>
@@ -311,51 +541,55 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="event_name">Event Name: *</label>
-                    <input type="text" id="event_name" name="event_name" placeholder="e.g., Mystery Trip, Summer Camp" required>
-                </div>
-                
-                <div class="form-group">
                     <label for="reason">Reason / Description: *</label>
-                    <textarea id="reason" name="reason" required></textarea>
+                    <textarea id="reason" name="reason" required 
+                              placeholder="Example: A Scoutsgiving event at Pigeon Point Lighthouse for 20 people (15 scouts + 5 adults) requires a $400 budget for 4 meals at $5 per person per meal."></textarea>
                 </div>
                 
                 <div class="form-group">
-                    <label for="date_submitted">Date Report Created: *</label>
-                    <input type="date" id="date_submitted" name="date_submitted" required readonly>
+                    <label for="date_created">Date Expense Report Created:</label>
+                    <input type="date" id="date_created" name="date_created" readonly>
                 </div>
             </div>
             
             <!-- Purchases Section -->
             <div class="form-section">
-                <h3>Items Purchased</h3>
+                <h3>Purchases</h3>
                 <div class="info-box">
-                    <p><strong>⚠️ Instructions:</strong> Click "Add Row" to add more purchase line items. If you enter data in one field of a row, all fields in that row must be completed.</p>
+                    <p><strong>⚠️ Instructions:</strong> Click "Add Purchase" to add more items. Each purchase should include a supporting document (receipt). All fields in a row must be completed if any field is filled.</p>
                 </div>
                 
-                <div class="table-section">
-                    <table id="purchasesTable">
-                        <thead>
-                            <tr>
-                                <th>Date Purchased</th>
-                                <th>Place Purchased</th>
-                                <th>Items Purchased</th>
-                                <th>$ Amount</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="purchasesBody">
-                            <tr class="purchase-row">
-                                <td><input type="date" name="purchase_date_0" class="purchase-date"></td>
-                                <td><input type="text" name="purchase_place_0" class="purchase-place"></td>
-                                <td><input type="text" name="purchase_items_0" class="purchase-items"></td>
-                                <td><input type="number" step="0.01" name="purchase_amount_0" class="purchase-amount" data-index="0"></td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="purchasesContainer">
+                    <div class="purchase-row-container" data-index="0">
+                        <div class="purchase-row-header">
+                            <span>Purchase #1</span>
+                        </div>
+                        <div class="purchase-fields">
+                            <div class="purchase-field">
+                                <label>Date Purchased: *</label>
+                                <input type="date" name="purchase_date_0" class="purchase-date" required>
+                            </div>
+                            <div class="purchase-field">
+                                <label>Place Purchased: *</label>
+                                <input type="text" name="purchase_place_0" class="purchase-place" required>
+                            </div>
+                            <div class="purchase-field">
+                                <label>Purchase Summary: *</label>
+                                <input type="text" name="items_summary_0" class="purchase-items" required placeholder="Bought groceries for outing">
+                            </div>
+                            <div class="purchase-field">
+                                <label>Amount ($): *</label>
+                                <input type="number" step="0.01" name="purchase_amount_0" class="purchase-amount" data-index="0" required>
+                            </div>
+                        </div>
+                        <div class="purchase-upload">
+                            <label>📎 Supporting Document (Receipt): *</label>
+                            <input type="file" name="purchase_doc_0" class="purchase-doc" accept=".jpg,.jpeg,.png,.tiff,.pdf" required>
+                        </div>
+                    </div>
                 </div>
-                <button type="button" class="add-row-btn" onclick="addPurchaseRow()">+ Add Row</button>
+                
+                <button type="button" class="add-row-btn" onclick="addPurchaseRow()">+ Add Purchase</button>
             </div>
             
             <!-- Mileage Section -->
@@ -391,23 +625,6 @@
                 <button type="button" class="add-row-btn" onclick="addMileageRow()">+ Add Row</button>
             </div>
             
-            <!-- Supporting Documents Section -->
-            <div class="form-section">
-                <h3>Supporting Documents</h3>
-                <div class="info-box">
-                    <p><strong>Accepted formats:</strong> JPEG, JPG, PNG, TIFF, PDF.</p>
-                    <p><strong>⚠️ Instructions:</strong> Upload receipts for all purchases (required). Mileage claims do not require supporting documents.</p>
-                </div>
-                
-                <div class="file-upload-section">
-                    <div class="form-group">
-                        <label for="supporting_docs">Upload Supporting Documents:</label>
-                        <input type="file" id="supporting_docs" name="supporting_docs" multiple 
-                               accept=".jpg,.jpeg,.png,.tiff,.pdf">
-                    </div>
-                </div>
-            </div>
-            
             <!-- Totals Display -->
             <div class="totals-display">
                 <div class="total-row">
@@ -424,8 +641,39 @@
                 </div>
             </div>
             
-            <button type="submit" class="submit-btn">Generate Expense Report</button>
+            <!-- Signature Section -->
+            <div class="signature-section">
+                <h3>📝 Signature & Acknowledgment</h3>
+                <p>By submitting this expense reimbursement report, I affirm that:</p>
+                <ul style="margin-left: 20px; margin-bottom: 15px;">
+                    <li>All information provided is true, honest, and accurate to the best of my knowledge</li>
+                    <li>All expenses listed were incurred for legitimate Troop 233/2233 activities</li>
+                    <li>I have provided accurate receipts and supporting documentation</li>
+                    <li>I understand this submission is made in accordance with the Scout Law</li>
+                </ul>
+                
+                <div class="scout-law">
+                    <strong>Scout Law:</strong> A Scout is Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, and Reverent.
+                </div>
+                
+                <div class="form-group">
+                    <label for="signature_name">Type Your Full Name to Sign: *</label>
+                    <input type="text" id="signature_name" name="signature_name" required 
+                           placeholder="Enter your full name as electronic signature">
+                </div>
+                
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="signature_acknowledgment" name="signature_acknowledgment" required>
+                        <span>I acknowledge that I am submitting this expense report truthfully, honestly, to the best of my knowledge, and in accordance with the Scout Law. *</span>
+                    </label>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Generate Expense Report</button>
         </form>
+        
+        <div style="text-align:center;"><BR><BR>To developed by <A href="https://salmancuso.com" target="_blank">Sal Mancuso</A></div>
     </div>
     
     <script>
@@ -436,28 +684,79 @@
         // Set max date to today for all date fields
         function setMaxDate() {
             document.querySelectorAll('input[type="date"]').forEach(input => {
-                input.max = today;
+                if (input.id !== 'date_created') {
+                    input.max = today;
+                }
             });
         }
         
         // Add purchase row
         function addPurchaseRow() {
-            const tbody = document.getElementById('purchasesBody');
-            const row = document.createElement('tr');
-            row.className = 'purchase-row';
-            row.innerHTML = `
-                <td><input type="date" name="purchase_date_${purchaseRowCount}" class="purchase-date" max="${today}"></td>
-                <td><input type="text" name="purchase_place_${purchaseRowCount}" class="purchase-place"></td>
-                <td><input type="text" name="purchase_items_${purchaseRowCount}" class="purchase-items"></td>
-                <td><input type="number" step="0.01" name="purchase_amount_${purchaseRowCount}" class="purchase-amount" data-index="${purchaseRowCount}"></td>
-                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remove</button></td>
+            const container = document.getElementById('purchasesContainer');
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'purchase-row-container';
+            rowDiv.setAttribute('data-index', purchaseRowCount);
+            
+            rowDiv.innerHTML = `
+                <div class="purchase-row-header">
+                    <span>Purchase #${purchaseRowCount + 1}</span>
+                    <button type="button" class="remove-row-btn" onclick="removePurchaseRow(this)">Remove</button>
+                </div>
+                <div class="purchase-fields">
+                    <div class="purchase-field">
+                        <label>Date Purchased: *</label>
+                        <input type="date" name="purchase_date_${purchaseRowCount}" class="purchase-date" max="${today}" required>
+                    </div>
+                    <div class="purchase-field">
+                        <label>Place Purchased: *</label>
+                        <input type="text" name="purchase_place_${purchaseRowCount}" class="purchase-place" required>
+                    </div>
+                    <div class="purchase-field">
+                        <label>Purchase Summary: *</label>
+                        <input type="text" name="items_summary_${purchaseRowCount}" class="purchase-items" required>
+                    </div>
+                    <div class="purchase-field">
+                        <label>Amount ($): *</label>
+                        <input type="number" step="0.01" name="purchase_amount_${purchaseRowCount}" class="purchase-amount" data-index="${purchaseRowCount}" required>
+                    </div>
+                </div>
+                <div class="purchase-upload">
+                    <label>📎 Supporting Document (Receipt): *</label>
+                    <input type="file" name="purchase_doc_${purchaseRowCount}" class="purchase-doc" accept=".jpg,.jpeg,.png,.tiff,.pdf" required>
+                </div>
             `;
-            tbody.appendChild(row);
+            
+            container.appendChild(rowDiv);
             purchaseRowCount++;
             
-            // Add event listeners to new row
-            row.querySelectorAll('.purchase-amount').forEach(input => {
-                input.addEventListener('input', updateTotals);
+            // Update row numbers
+            updatePurchaseNumbers();
+            
+            // Add event listener for amount calculation
+            rowDiv.querySelector('.purchase-amount').addEventListener('input', updateTotals);
+        }
+        
+        // Remove purchase row
+        function removePurchaseRow(btn) {
+            const rowContainer = btn.closest('.purchase-row-container');
+            const container = document.getElementById('purchasesContainer');
+            
+            // Don't allow removal of last purchase row
+            if (container.children.length > 1) {
+                rowContainer.remove();
+                updatePurchaseNumbers();
+                updateTotals();
+            } else {
+                alert('You must have at least one purchase row.');
+            }
+        }
+        
+        // Update purchase row numbers
+        function updatePurchaseNumbers() {
+            const rows = document.querySelectorAll('.purchase-row-container');
+            rows.forEach((row, index) => {
+                const header = row.querySelector('.purchase-row-header span');
+                header.textContent = `Purchase #${index + 1}`;
             });
         }
         
@@ -471,7 +770,7 @@
                 <td><input type="text" name="mileage_start_${mileageRowCount}" class="mileage-start"></td>
                 <td><input type="text" name="mileage_dest_${mileageRowCount}" class="mileage-dest"></td>
                 <td><input type="number" step="0.01" name="mileage_miles_${mileageRowCount}" class="mileage-miles" data-index="${mileageRowCount}"></td>
-                <td><button type="button" class="remove-row-btn" onclick="removeRow(this)">Remove</button></td>
+                <td><button type="button" class="remove-row-btn" onclick="removeMileageRow(this)">Remove</button></td>
             `;
             tbody.appendChild(row);
             mileageRowCount++;
@@ -482,8 +781,8 @@
             });
         }
         
-        // Remove row
-        function removeRow(btn) {
+        // Remove mileage row
+        function removeMileageRow(btn) {
             const row = btn.closest('tr');
             row.remove();
             updateTotals();
@@ -517,20 +816,9 @@
             document.getElementById('grand-total').textContent = `$${grandTotal.toFixed(2)}`;
         }
         
-        // Validate row completeness
-        function validateRowCompleteness() {
+        // Validate mileage row completeness
+        function validateMileageRows() {
             let errors = [];
-            
-            // Validate purchase rows
-            document.querySelectorAll('.purchase-row').forEach((row, index) => {
-                const inputs = row.querySelectorAll('input');
-                const values = Array.from(inputs).map(input => input.value.trim());
-                const filledCount = values.filter(v => v !== '').length;
-                
-                if (filledCount > 0 && filledCount < 4) {
-                    errors.push(`Purchase row ${index + 1}: All fields must be completed if any field is filled.`);
-                }
-            });
             
             // Validate mileage rows
             document.querySelectorAll('.mileage-row').forEach((row, index) => {
@@ -553,34 +841,40 @@
         
         // Set default date to today and max dates
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('date_submitted').valueAsDate = new Date();
+            document.getElementById('date_created').valueAsDate = new Date();
             setMaxDate();
+            updateTotals();
         });
         
         // Form validation
         document.getElementById('expenseForm').addEventListener('submit', function(e) {
-            // Check row completeness
-            const rowErrors = validateRowCompleteness();
-            if (rowErrors.length > 0) {
+            // Check mileage row completeness
+            const mileageErrors = validateMileageRows();
+            if (mileageErrors.length > 0) {
                 e.preventDefault();
-                alert('Please complete all fields in partially filled rows:\n\n' + rowErrors.join('\n'));
+                alert('Please complete all fields in partially filled mileage rows:\n\n' + mileageErrors.join('\n'));
                 return false;
             }
             
-            // Check if at least one purchase or mileage exists
-            const hasPurchase = Array.from(document.querySelectorAll('.purchase-amount')).some(input => {
-                return parseFloat(input.value) > 0;
-            });
+            // Check signature
+            const signatureName = document.getElementById('signature_name').value.trim();
+            const acknowledgment = document.getElementById('signature_acknowledgment').checked;
             
-            const hasMileage = Array.from(document.querySelectorAll('.mileage-miles')).some(input => {
-                return parseFloat(input.value) > 0;
-            });
-            
-            if (!hasPurchase && !hasMileage) {
+            if (!signatureName) {
                 e.preventDefault();
-                alert('Please enter at least one purchase or mileage item.');
+                alert('Please provide your electronic signature by typing your full name.');
                 return false;
             }
+            
+            if (!acknowledgment) {
+                e.preventDefault();
+                alert('Please check the acknowledgment box to confirm your submission.');
+                return false;
+            }
+            
+            // Disable submit button to prevent double submission
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Generating Report...';
         });
     </script>
 </body>

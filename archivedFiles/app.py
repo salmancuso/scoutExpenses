@@ -18,6 +18,7 @@ import sys
 import logging
 import os
 from pathlib import Path
+import re
 
 # Get the absolute path of the app directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -68,10 +69,23 @@ def convert_pdf_to_images(pdf_path, output_folder):
         print(f"Error converting PDF: {e}")
         return []
 
-def generate_expense_report(data, supporting_files):
+def sanitize_filename(text):
+    """Remove special characters and spaces from filename"""
+    # Remove any characters that aren't alphanumeric, hyphen, or underscore
+    text = re.sub(r'[^\w\-]', '', text)
+    return text
+
+def generate_expense_report(data, purchase_documents, signature_data):
     """Generate PDF expense report"""
     report_id = str(uuid.uuid4())
-    report_path = os.path.join(app.config['REPORT_FOLDER'], f"expense_report_{report_id}.pdf")
+    
+    # Create sanitized filename
+    last_name = sanitize_filename(data['requestor_last'])
+    event_name = sanitize_filename(data['event_name'])
+    event_date = sanitize_filename(data['event_date'].replace('-', ''))
+    
+    report_filename = f"{last_name}_{event_name}_{event_date}.pdf"
+    report_path = os.path.join(app.config['REPORT_FOLDER'], report_filename)
     
     doc = SimpleDocTemplate(report_path, pagesize=letter, topMargin=0.5*inch, bottomMargin=0.5*inch)
     story = []
@@ -87,6 +101,16 @@ def generate_expense_report(data, supporting_files):
         alignment=TA_CENTER
     )
     
+    warning_style = ParagraphStyle(
+        'WarningStyle',
+        parent=styles['Normal'],
+        fontSize=12,
+        textColor=colors.HexColor('#a70000'),
+        spaceAfter=10,
+        alignment=TA_CENTER,
+        fontName='Helvetica-Bold'
+    )
+    
     header_style = ParagraphStyle(
         'CustomHeader',
         parent=styles['Normal'],
@@ -96,32 +120,42 @@ def generate_expense_report(data, supporting_files):
     
     # Title
     story.append(Paragraph("TROOP 233/2233 EXPENSE REIMBURSEMENT", title_style))
-    story.append(Paragraph("NEXT STEPS: After you create your Expense Report PDF, please remember to email it to the treasurer through Troopweb Host.",title_style))
+    story.append(Spacer(1, 0.1*inch))
+    
+    # Warning about reimbursement
+    story.append(Paragraph("⚠️ IMPORTANT: Reimbursement will go to Requestor's account", warning_style))
+    story.append(Spacer(1, 0.1*inch))
+    
+    story.append(Paragraph("NEXT STEPS: You MUST email this expense report to the treasurer through Troopweb Host in order to be reimbursed.", title_style))
     story.append(Spacer(1, 0.2*inch))
     
     # Event Information
+    requestor_name = f"{data['requestor_first']} {data['requestor_last']}"
     event_data = [
-        ['Requested From:', data['requester']],
-        ['Event Details:', Paragraph(data['event_dates'], header_style)],
+        ['Requestor:', requestor_name],
+        ['Email:', data['email']],
+        ['Troop #:', data['troop_number']],
+        ['Event Name:', data['event_name']],
+        ['Event Date:', data['event_date']],
         ['Reason / Description:', Paragraph(data['reason'], header_style)],
-        ['Date Created:', data['date_submitted']]
+        ['Date Created:', data['date_created']]
     ]
     
     event_table = Table(event_data, colWidths=[2*inch, 4.5*inch])
     event_table.setStyle(TableStyle([
-    ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
-    ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-    ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-    ('ALIGN', (1, 0), (1, -1), 'LEFT'),
-    ('VALIGN', (0, 0), (-1, -1), 'TOP'),  # Add this line
-    ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-    ('FONTSIZE', (0, 0), (-1, -1), 10),
-    ('GRID', (0, 0), (-1, -1), 1, colors.black),
-    ('LEFTPADDING', (0, 0), (-1, -1), 6),
-    ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-    ('TOPPADDING', (0, 0), (-1, -1), 6),
-    ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-]))
+        ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+    ]))
 
     story.append(event_table)
     story.append(Spacer(1, 0.2*inch))
@@ -130,18 +164,20 @@ def generate_expense_report(data, supporting_files):
     purchase_data = [['Date Purchased', 'Place Purchased', 'Items Purchased', '$ Amount']]
     total_purchases = 0.0
     
-    for i in range(5):
-        if data['purchases'][i]['date']:
-            amount = float(data['purchases'][i]['amount']) if data['purchases'][i]['amount'] else 0.0
+    for purchase in data['purchases']:
+        if purchase['date']:
+            amount = float(purchase['amount']) if purchase['amount'] else 0.0
             total_purchases += amount
             purchase_data.append([
-                data['purchases'][i]['date'],
-                data['purchases'][i]['place'],
-                data['purchases'][i]['items'],
+                purchase['date'],
+                purchase['place'],
+                purchase['items'],
                 f"${amount:.2f}"
             ])
-        else:
-            purchase_data.append(['', '', '', ''])
+    
+    # Add empty row if no purchases
+    if len(purchase_data) == 1:
+        purchase_data.append(['', '', '', ''])
     
     purchase_data.append(['', '', 'Total All Items Purchased', f"${total_purchases:.2f}"])
     
@@ -165,23 +201,23 @@ def generate_expense_report(data, supporting_files):
     total_miles = 0.0
     total_mileage_cost = 0.0
     
-    for i in range(4):
-        # Check if any mileage field is filled
-        if (data['mileage'][i]['date'] or data['mileage'][i]['start'] or 
-            data['mileage'][i]['destination'] or data['mileage'][i]['miles']):
-            miles = float(data['mileage'][i]['miles']) if data['mileage'][i]['miles'] else 0.0
+    for mileage in data['mileage']:
+        if mileage['date']:
+            miles = float(mileage['miles']) if mileage['miles'] else 0.0
             cost = miles * MILEAGE_RATE
             total_miles += miles
             total_mileage_cost += cost
             mileage_data.append([
-                data['mileage'][i]['date'],
-                data['mileage'][i]['start'],
-                data['mileage'][i]['destination'],
+                mileage['date'],
+                mileage['start'],
+                mileage['destination'],
                 f"{miles:.2f}" if miles else '',
                 f"${cost:.2f}"
             ])
-        else:
-            mileage_data.append(['', '', '', '', ''])
+    
+    # Add empty row if no mileage
+    if len(mileage_data) == 1:
+        mileage_data.append(['', '', '', '', ''])
     
     mileage_data.append(['', '', 'All Miles Total', f"{total_miles:.2f}", f"${total_mileage_cost:.2f}"])
     
@@ -215,45 +251,87 @@ def generate_expense_report(data, supporting_files):
         ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
     ]))
     story.append(total_table)
+    story.append(Spacer(1, 0.3*inch))
     
-    # Supporting Documents
-    if supporting_files:
+    # Signature Section
+    if signature_data:
+        signature_style = ParagraphStyle(
+            'SignatureStyle',
+            parent=styles['Normal'],
+            fontSize=11,
+            spaceAfter=8
+        )
+        
+        story.append(Paragraph("SIGNATURE AND ACKNOWLEDGMENT", title_style))
+        story.append(Spacer(1, 0.15*inch))
+        
+        story.append(Paragraph("By submitting this expense reimbursement report, I affirm that:", signature_style))
+        story.append(Paragraph("• All information provided is true, honest, and accurate to the best of my knowledge", signature_style))
+        story.append(Paragraph("• All expenses listed were incurred for legitimate Troop 233/2233 activities", signature_style))
+        story.append(Paragraph("• I have provided accurate receipts and supporting documentation", signature_style))
+        story.append(Paragraph("• I understand this submission is made in accordance with the Scout Law", signature_style))
+        story.append(Spacer(1, 0.15*inch))
+        
+        scout_law_text = "<b>Scout Law:</b> <i>A Scout is Trustworthy, Loyal, Helpful, Friendly, Courteous, Kind, Obedient, Cheerful, Thrifty, Brave, Clean, and Reverent.</i>"
+        story.append(Paragraph(scout_law_text, signature_style))
+        story.append(Spacer(1, 0.2*inch))
+        
+        # Signature table
+        signature_table_data = [
+            ['Electronic Signature:', signature_data['name']],
+            ['Date Signed:', signature_data['date']],
+            ['Acknowledgment:', 'Confirmed in accordance with Scout Law']
+        ]
+        
+        sig_table = Table(signature_table_data, colWidths=[2*inch, 4.5*inch])
+        sig_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
+            ('FONTNAME', (1, 0), (1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('LEFTPADDING', (0, 0), (-1, -1), 8),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+            ('TOPPADDING', (0, 0), (-1, -1), 8),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+        ]))
+        story.append(sig_table)
+    
+    # Supporting Documents - organized by purchase
+    if purchase_documents:
         story.append(PageBreak())
         story.append(Paragraph("SUPPORTING DOCUMENTS", title_style))
         story.append(Spacer(1, 0.2*inch))
         
-        for file_path in supporting_files:
-            try:
-                # Handle images
-                if file_path.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):
-                    img = PILImage.open(file_path)
-                    img_width, img_height = img.size
-                    
-                    # Scale image to fit page
-                    max_width = 6.5 * inch
-                    max_height = 8 * inch
-                    
-                    aspect = img_height / float(img_width)
-                    if img_width > max_width:
-                        img_width = max_width
-                        img_height = img_width * aspect
-                    
-                    if img_height > max_height:
-                        img_height = max_height
-                        img_width = img_height / aspect
-                    
-                    story.append(Image(file_path, width=img_width, height=img_height))
-                    story.append(Spacer(1, 0.2*inch))
+        # Iterate through purchases and their documents
+        for purchase_index, purchase in enumerate(data['purchases']):
+            if purchase['date'] and purchase_index in purchase_documents:
+                # Add purchase info header
+                purchase_header = f"Purchase #{purchase_index + 1}: {purchase['items']} - ${purchase['amount']}"
+                purchase_header_para = Paragraph(purchase_header, ParagraphStyle(
+                    'PurchaseHeader',
+                    parent=styles['Normal'],
+                    fontSize=12,
+                    fontName='Helvetica-Bold',
+                    textColor=colors.HexColor('#003f87'),
+                    spaceAfter=10
+                ))
+                story.append(purchase_header_para)
                 
-                # Handle PDFs converted to images
-                elif file_path.lower().endswith('.pdf'):
-                    pdf_images = convert_pdf_to_images(file_path, app.config['UPLOAD_FOLDER'])
-                    for pdf_img in pdf_images:
-                        img = PILImage.open(pdf_img)
+                file_path = purchase_documents[purchase_index]
+                try:
+                    # Handle images
+                    if file_path.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):
+                        img = PILImage.open(file_path)
                         img_width, img_height = img.size
                         
+                        # Scale image to fit page
                         max_width = 6.5 * inch
-                        max_height = 8 * inch
+                        max_height = 7 * inch
                         
                         aspect = img_height / float(img_width)
                         if img_width > max_width:
@@ -264,14 +342,40 @@ def generate_expense_report(data, supporting_files):
                             img_height = max_height
                             img_width = img_height / aspect
                         
-                        story.append(Image(pdf_img, width=img_width, height=img_height))
-                        story.append(Spacer(1, 0.2*inch))
-            except Exception as e:
-                print(f"Error adding file {file_path}: {e}")
+                        story.append(Image(file_path, width=img_width, height=img_height))
+                        story.append(Spacer(1, 0.3*inch))
+                    
+                    # Handle PDFs converted to images
+                    elif file_path.lower().endswith('.pdf'):
+                        pdf_images = convert_pdf_to_images(file_path, app.config['UPLOAD_FOLDER'])
+                        for pdf_img in pdf_images:
+                            img = PILImage.open(pdf_img)
+                            img_width, img_height = img.size
+                            
+                            max_width = 6.5 * inch
+                            max_height = 7 * inch
+                            
+                            aspect = img_height / float(img_width)
+                            if img_width > max_width:
+                                img_width = max_width
+                                img_height = img_width * aspect
+                            
+                            if img_height > max_height:
+                                img_height = max_height
+                                img_width = img_height / aspect
+                            
+                            story.append(Image(pdf_img, width=img_width, height=img_height))
+                            story.append(Spacer(1, 0.2*inch))
+                except Exception as e:
+                    print(f"Error adding file {file_path}: {e}")
+                
+                # Add page break between purchases if not the last one
+                if purchase_index < len([p for p in data['purchases'] if p['date']]) - 1:
+                    story.append(PageBreak())
     
     # Build PDF
     doc.build(story)
-    return report_id
+    return report_id, report_filename
 
 @app.route('/')
 def index():
@@ -283,61 +387,90 @@ def submit():
     try:
         # Collect form data
         data = {
-            'requester': request.form.get('requester', ''),
-            'event_dates': request.form.get('event_dates', ''),
+            'requestor_first': request.form.get('requestor_first', ''),
+            'requestor_last': request.form.get('requestor_last', ''),
+            'email': request.form.get('email', ''),
+            'troop_number': request.form.get('troop_number', ''),
+            'event_name': request.form.get('event_name', ''),
+            'event_date': request.form.get('event_date', ''),
             'reason': request.form.get('reason', ''),
-            'date_submitted': request.form.get('date_submitted', ''),
+            'date_created': request.form.get('date_created', ''),
             'purchases': [],
             'mileage': []
         }
         
-        # Collect purchase data
-        for i in range(5):
-            data['purchases'].append({
-                'date': request.form.get(f'purchase_date_{i}', ''),
-                'place': request.form.get(f'purchase_place_{i}', ''),
-                'items': request.form.get(f'purchase_items_{i}', ''),
-                'amount': request.form.get(f'purchase_amount_{i}', '')
-            })
+        # Collect signature data
+        signature_data = {
+            'name': request.form.get('signature_name', ''),
+            'date': datetime.now().strftime('%B %d, %Y at %I:%M %p'),
+            'acknowledgment': request.form.get('signature_acknowledgment', '') == 'on'
+        }
         
-        # Collect mileage data
-        for i in range(4):
-            data['mileage'].append({
-                'date': request.form.get(f'mileage_date_{i}', ''),
-                'start': request.form.get(f'mileage_start_{i}', ''),
-                'destination': request.form.get(f'mileage_dest_{i}', ''),
-                'miles': request.form.get(f'mileage_miles_{i}', '')
-            })
+        # Dictionary to store purchase documents mapped to their index
+        purchase_documents = {}
         
-        # Handle file uploads
-        uploaded_files = []
-        files = request.files.getlist('supporting_docs')
+        # Collect purchase data and associated files
+        i = 0
+        while True:
+            date = request.form.get(f'purchase_date_{i}', None)
+            if date is None:
+                break
+            
+            if date:  # Only add if date is provided
+                data['purchases'].append({
+                    'date': date,
+                    'place': request.form.get(f'purchase_place_{i}', ''),
+                    'items': request.form.get(f'items_summary_{i}', ''),
+                    'amount': request.form.get(f'purchase_amount_{i}', '')
+                })
+                
+                # Handle file upload for this specific purchase
+                file_key = f'purchase_doc_{i}'
+                if file_key in request.files:
+                    file = request.files[file_key]
+                    if file and file.filename and allowed_file(file.filename):
+                        filename = secure_filename(file.filename)
+                        unique_filename = f"{uuid.uuid4()}_{filename}"
+                        filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                        file.save(filepath)
+                        # Map the file to this purchase index
+                        purchase_documents[len(data['purchases']) - 1] = filepath
+            i += 1
         
-        for file in files:
-            if file and file.filename and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                unique_filename = f"{uuid.uuid4()}_{filename}"
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-                file.save(filepath)
-                uploaded_files.append(filepath)
+        # Collect mileage data (dynamic number of rows)
+        i = 0
+        while True:
+            date = request.form.get(f'mileage_date_{i}', None)
+            if date is None:
+                break
+            
+            if date:  # Only add if date is provided
+                data['mileage'].append({
+                    'date': date,
+                    'start': request.form.get(f'mileage_start_{i}', ''),
+                    'destination': request.form.get(f'mileage_dest_{i}', ''),
+                    'miles': request.form.get(f'mileage_miles_{i}', '')
+                })
+            i += 1
         
         # Generate PDF
-        report_id = generate_expense_report(data, uploaded_files)
+        report_id, report_filename = generate_expense_report(data, purchase_documents, signature_data)
         
-        return redirect(url_for('download', report_id=report_id))
+        return redirect(url_for('download', report_id=report_id, filename=report_filename))
     
     except Exception as e:
         return f"Error generating report: {str(e)}", 500
 
 @app.route('/download/<report_id>')
 def download(report_id):
-    return render_template('download.html', report_id=report_id)
+    filename = request.args.get('filename', f'expense_report_{report_id}.pdf')
+    return render_template('download.html', report_id=report_id, filename=filename)
 
-@app.route('/get_report/<report_id>')
-def get_report(report_id):
-    report_path = os.path.join(app.config['REPORT_FOLDER'], f"expense_report_{report_id}.pdf")
+@app.route('/get_report/<filename>')
+def get_report(filename):
+    report_path = os.path.join(app.config['REPORT_FOLDER'], filename)
     if os.path.exists(report_path):
-        return send_file(report_path, as_attachment=True, download_name=f"Troop233_Expense_Report_{report_id[:8]}.pdf")
+        return send_file(report_path, as_attachment=True, download_name=filename)
     return "Report not found", 404
 
 if __name__ == '__main__':
